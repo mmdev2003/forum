@@ -1,0 +1,73 @@
+services:
+  forum-dialog-unit-test:
+    container_name: forum-dialog-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-dialog-db-unit-test
+    networks:
+      - net
+
+  forum-dialog-db-unit-test:
+    image: postgres:latest
+    container_name: forum-dialog-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-dialog-redis-unit-test:
+    image: redis:7.0-alpine
+    container_name: forum-dialog-redis-unit-test
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass password111
+    networks:
+      - net
+
+  forum-dialog-weed-master-unit-test:
+    image: chrislusf/seaweedfs
+    logging:
+      driver: none
+    container_name: forum-dialog-weed-master-unit-test
+    ports:
+      - "9333:9333"
+    command: "master"
+    networks:
+      - net
+
+  forum-dialog-weed-volume-unit-test:
+    image: chrislusf/seaweedfs
+    container_name: forum-dialog-weed-volume-unit-test
+    logging:
+      driver: none
+    ports:
+      - "8080:8080"
+    command: 'volume -mserver="forum-dialog-weed-master-unit-test:9333" -port=8080'
+    depends_on:
+      - forum-dialog-weed-master-unit-test
+    networks:
+      - net
+
+  forum-dialog-weed-filer-unit-test:
+    image: chrislusf/seaweedfs
+    container_name: forum-dialog-weed-filer-unit-test
+    logging:
+      driver: none
+    ports:
+      - "8888:8888"
+    command: 'filer -master="forum-dialog-weed-master-unit-test:9333"'
+    depends_on:
+      - forum-dialog-weed-master-unit-test
+      - forum-dialog-weed-volume-unit-test
+    networks:
+      - net
+
+networks:
+  net:

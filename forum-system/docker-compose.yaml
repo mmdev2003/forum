@@ -1,0 +1,397 @@
+services:
+
+  # AUTHENTICATION
+  forum-authentication:
+    build:
+      context: "../forum-authentication"
+      dockerfile: ".github/Dockerfile"
+    container_name: forum-authentication
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - forum-authentication-db
+    networks:
+      - net
+
+  forum-authentication-db:
+    image: postgres:latest
+    container_name: forum-authentication-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-authentication:/var/lib/postgresql/data"
+    ports:
+      - "10000:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # AUTHORIZATION
+  forum-authorization:
+    build:
+      context: "../forum-authorization"
+      dockerfile: ".github/Dockerfile"
+    container_name: forum-authorization
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    networks:
+      - net
+  forum-authorization-db:
+    image: postgres:latest
+    container_name: forum-authorization-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-authorization:/var/lib/postgresql/data"
+    ports:
+      - "10001:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # DIALOG
+  forum-dialog:
+    build:
+      context: "../forum-dialog"
+      dockerfile: ".github/Dockerfile"
+    container_name: forum-dialog
+    ports:
+      - "8002:8002"
+    restart: unless-stopped
+    networks:
+      - net
+  forum-dialog-db:
+    image: postgres:latest
+    container_name: forum-dialog-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-dialog:/var/lib/postgresql/data"
+    ports:
+      - "10002:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # THREAD
+  forum-thread:
+    container_name: forum-thread
+    build:
+      context: "../forum-thread"
+      dockerfile: ".github/Dockerfile"
+    ports:
+      - "8003:8003"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-thread-db:
+    image: postgres:latest
+    container_name: forum-thread-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-thread:/var/lib/postgresql/data"
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # FRAME
+  forum-frame:
+    container_name: forum-frame
+    build:
+      context: "../forum-frame"
+      dockerfile: ".github/Dockerfile"
+    ports:
+      - "8004:8004"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-frame-db:
+    image: postgres:latest
+    container_name: forum-frame-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-frame:/var/lib/postgresql/data"
+    ports:
+      - "10004:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # STATUS
+  forum-status:
+    container_name: forum-status
+    build:
+      context: "../forum-status"
+      dockerfile: ".github/Dockerfile"
+    ports:
+      - "8005:8005"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-status-db:
+    image: postgres:latest
+    container_name: forum-status-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-status:/var/lib/postgresql/data"
+    ports:
+      - "10005:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # USER
+  forum-user:
+    container_name: forum-user
+    build:
+      context: "../forum-user"
+      dockerfile: ".github/Dockerfile"
+    ports:
+      - "8006:8006"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-user-db:
+    image: postgres:latest
+    container_name: forum-user-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-user:/var/lib/postgresql/data"
+    ports:
+      - "10006:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+#  # NOTIFICATION
+#  forum-notification:
+#    container_name: forum-notification
+#    build:
+#      context: "../forum-notification"
+#      dockerfile: ".github/Dockerfile"
+#    ports:
+#      - "8007:8007"
+#    restart: unless-stopped
+#    networks:
+#      - net
+#
+#  forum-notification-db:
+#    image: postgres:latest
+#    container_name: forum-notification-db
+#    environment:
+#      PGDATA: "/var/lib/postgresql/data/pgdata"
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_DB: postgres
+#    volumes:
+#      - "/var/lib/postgresql/forum-notification:/var/lib/postgresql/data"
+#    ports:
+#      - "10007:5432"
+#    restart: unless-stopped
+#    networks:
+#      - net
+#
+#  # SUPPORT
+#  forum-support:
+#    container_name: forum-support
+#    build:
+#      context: "../forum-support"
+#      dockerfile: ".github/Dockerfile"
+#    ports:
+#      - "8008:8008"
+#    restart: unless-stopped
+#    networks:
+#      - net
+#
+#  forum-support-db:
+#    image: postgres:latest
+#    container_name: forum-support-db
+#    environment:
+#      PGDATA: "/var/lib/postgresql/data/pgdata"
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_DB: postgres
+#    volumes:
+#      - "/var/lib/postgresql/forum-support:/var/lib/postgresql/data"
+#    ports:
+#      - "10008:5432"
+#    restart: unless-stopped
+#    networks:
+#      - net
+
+  # PAYMENT
+  forum-payment:
+    container_name: forum-payment
+    build:
+      context: "../forum-payment"
+      dockerfile: ".github/DockerfileServer"
+    ports:
+      - "8009:8009"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-payment-btc-confirmator:
+    container_name: forum-payment-btc-confirmator
+    build:
+      context: "../forum-payment"
+      dockerfile: ".github/DockerfileConfirmator"
+
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-payment-db:
+    image: postgres:latest
+    container_name: forum-payment-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-payment:/var/lib/postgresql/data"
+    ports:
+      - "10009:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+
+  # ADMIN
+  forum-admin:
+    container_name: forum-admin
+    build:
+      context: "../forum-admin"
+      dockerfile: ".github/Dockerfile"
+    ports:
+      - "8010:8010"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-admin-db:
+    image: postgres:latest
+    container_name: forum-admin-db
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - "/var/lib/postgresql/forum-admin:/var/lib/postgresql/data"
+    ports:
+      - "10010:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  # INFRASTRUCTURE
+  forum-rabbitmq:
+    image: rabbitmq:4-management
+    container_name: forum-rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=aloha
+      - RABBITMQ_DEFAULT_PASS=tool_pool
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    volumes:
+      - "./rabbitmq:/var/lib/rabbitmq"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - net
+
+  weed-master:
+    image: chrislusf/seaweedfs
+    logging:
+      driver: none
+    container_name: weed-master
+    ports:
+      - "9333:9333"
+    command: "master"
+    networks:
+      - net
+
+  weed-volume:
+    image: chrislusf/seaweedfs
+    container_name: weed-volume
+    logging:
+      driver: none
+    ports:
+      - "8080:8080"
+    command: 'volume -mserver="weed-master:9333" -port=8080'
+    depends_on:
+      - weed-master
+    networks:
+      - net
+
+  weed-filer:
+    image: chrislusf/seaweedfs
+    container_name: weed-filler
+    logging:
+      driver: none
+    ports:
+      - "8888:8888"
+    command: 'filer -master="weed-master:9333"'
+    depends_on:
+      - weed-master
+      - weed-volume
+    networks:
+      - net
+
+  forum-meilisearch:
+    image: getmeili/meilisearch
+    container_name: forum-meilisearch
+    environment:
+      - MEILI_MASTER_KEY=qwertyuiop
+      - MEILI_LOG_LEVEL=error
+    networks:
+      - net
+
+  forum-redis:
+    image: redis:7.0-alpine
+    container_name: forum-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass password111
+    networks:
+      - net
+
+
+networks:
+  net:

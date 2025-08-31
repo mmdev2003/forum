@@ -1,0 +1,75 @@
+services:
+  forum-user-unit-test:
+    container_name: forum-user-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-user-db-unit-test
+    networks:
+      - net
+
+  forum-user-db-unit-test:
+    image: postgres:latest
+    container_name: forum-user-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-user-weed-master-unit-test:
+    image: chrislusf/seaweedfs
+    logging:
+      driver: none
+    container_name: forum-user-weed-master-unit-test
+    ports:
+      - "9333:9333"
+    command: "master"
+    networks:
+      - net
+
+  forum-user-weed-volume-unit-test:
+    image: chrislusf/seaweedfs
+    container_name: forum-user-weed-volume-unit-test
+    logging:
+      driver: none
+    ports:
+      - "8080:8080"
+    command: 'volume -mserver="forum-user-weed-master-unit-test:9333" -port=8080'
+    depends_on:
+      - forum-user-weed-master-unit-test
+    networks:
+      - net
+
+  forum-user-weed-filer-unit-test:
+    image: chrislusf/seaweedfs
+    container_name: forum-user-weed-filer-unit-test
+    logging:
+      driver: none
+    ports:
+      - "8888:8888"
+    command: 'filer -master="forum-user-weed-master-unit-test:9333"'
+    depends_on:
+      - forum-user-weed-master-unit-test
+      - forum-user-weed-volume-unit-test
+    networks:
+      - net
+
+  forum-meilisearch-user-unit-test:
+    image: getmeili/meilisearch
+    container_name: forum-meilisearch-user-unit-test
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=qwertyuiop
+      - MEILI_LOG_LEVEL=error
+    networks:
+      - net
+
+networks:
+  net:

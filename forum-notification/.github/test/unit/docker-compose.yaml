@@ -1,0 +1,24 @@
+services:
+  forum-notification-unit-test:
+    container_name: forum-notification-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-notification-db-unit-test
+    networks:
+      - net
+
+  forum-notification-db-unit-test:
+    image: postgres:latest
+    container_name: forum-notification-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    restart: unless-stopped
+    networks:
+      - net
+
+networks:
+  net:

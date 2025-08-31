@@ -1,0 +1,26 @@
+services:
+  forum-authorization-unit-test:
+    container_name: forum-authorization-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-authorization-db-unit-test
+    networks:
+      - net
+
+  forum-authorization-db-unit-test:
+    image: postgres:latest
+    container_name: forum-authorization-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+networks:
+  net:

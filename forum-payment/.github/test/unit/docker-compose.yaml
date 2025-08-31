@@ -1,0 +1,26 @@
+services:
+  forum-payment-unit-test:
+    container_name: forum-payment-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-payment-db-unit-test
+    networks:
+      - net
+
+  forum-payment-db-unit-test:
+    image: postgres:latest
+    container_name: forum-payment-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+networks:
+  net:

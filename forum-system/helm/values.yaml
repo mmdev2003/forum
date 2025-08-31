@@ -1,0 +1,12 @@
+service:
+  type: NodePort
+  port: 80
+  targetPort: 80
+  nodePort: 30080
+
+general:
+  name: "Name"
+
+deployment:
+  replicas: 1
+  image: "Image"

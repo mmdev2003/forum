@@ -1,0 +1,35 @@
+services:
+  forum-support-unit-test:
+    container_name: forum-support-unit-test
+    build:
+      context: "../../../"
+      dockerfile: ".github/test/unit/Dockerfile"
+    depends_on:
+      - forum-support-db-unit-test
+    networks:
+      - net
+
+  forum-support-db-unit-test:
+    image: postgres:latest
+    container_name: forum-support-db-unit-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "10003:5432"
+    restart: unless-stopped
+    networks:
+      - net
+
+  forum-support-redis-unit-test:
+    image: redis:7.0-alpine
+    container_name: forum-support-redis-unit-test
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass password111
+    networks:
+      - net
+
+networks:
+  net:
